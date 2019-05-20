@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.SignalR;
 using System;
 using System.Threading.Tasks;
 
@@ -9,6 +10,7 @@ namespace Adc19SignalR
         // Im Beispiel werden nur Strings verwendet, allerdings kann jedes C# Objekt verwendet werden, solange es in JSON serialisiert werden kann
 
         // Sendet eine Nachricht an alle verbundenen Clients
+        [Authorize]
         public Task BroadcastMessage(string msg)
         {
             return Clients.All.SendAsync("EmpfangeNachricht", msg);
@@ -33,6 +35,7 @@ namespace Adc19SignalR
         }
 
         // Fügt den aufrufenden Client zu einer spezifischen Gruppe hinzu
+        [Authorize(Roles = "Admin")]
         public async Task AddUserToGroup(string groupName)
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
@@ -41,6 +44,7 @@ namespace Adc19SignalR
         }
 
         // Entfernt den Client von der aufrufenden Gruppe
+        [Authorize(Roles = "Admin")]
         public async Task RemoveUserFromGroup(string groupName)
         {
             await Groups.RemoveFromGroupAsync(Context.ConnectionId, groupName);

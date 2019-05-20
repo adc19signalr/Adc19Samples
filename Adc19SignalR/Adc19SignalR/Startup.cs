@@ -28,6 +28,21 @@ namespace Adc19SignalR
 
             // SignalR Hinzufügen
             services.AddSignalR();
+                    
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowEveryGet",
+                    builder => builder.AllowAnyOrigin()
+                        .WithMethods("GET")
+                        .AllowAnyHeader()
+                        .AllowCredentials());
+
+                options.AddPolicy("AllowExampleDomain",
+                    builder => builder.WithOrigins("http://adc.ms")
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials());
+            });
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
@@ -48,13 +63,17 @@ namespace Adc19SignalR
             app.UseCookiePolicy();
 
             // SignalR Verwenden
+            app.UseAuthentication();
+
+            app.UseCors("AllowEveryGet")
+               .UseCors("AllowExampleDomain");
+
             app.UseSignalR(routes =>
             {
                 routes.MapHub<AdcHub>("/adcHub");
             });
 
             app.UseMvc();
-
         }
     }
 }
