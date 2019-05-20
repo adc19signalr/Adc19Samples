@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -30,6 +26,8 @@ namespace Adc19SignalR
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
+            // SignalR Hinzufügen
+            services.AddSignalR();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
@@ -49,7 +47,14 @@ namespace Adc19SignalR
             app.UseStaticFiles();
             app.UseCookiePolicy();
 
+            // SignalR Verwenden
+            app.UseSignalR(routes =>
+            {
+                routes.MapHub<AdcHub>("/adcHub");
+            });
+
             app.UseMvc();
+
         }
     }
 }
